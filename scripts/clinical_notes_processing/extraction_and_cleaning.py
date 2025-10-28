@@ -1,9 +1,9 @@
 ###################################################################################
-#extraction_and_cleaning.py
+# extraction_and_cleaning.py
 # Script to extract and clean clinical notes from raw files
 # Outputs cleaned notes into CSV files, splitting by size if needed
 # to run:
-#RAW_NOTES_DIR="dir" PROCESSED_NOTES_DIR="dir" python extraction_and_cleaning.py
+# RAW_NOTES_DIR="dir" PROCESSED_NOTES_DIR="dir" python extraction_and_cleaning.py
 ###################################################################################
 import re
 import pandas as pd
