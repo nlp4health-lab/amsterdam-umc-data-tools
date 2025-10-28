@@ -1,8 +1,10 @@
-####################################################################
+###################################################################################
 #extraction_and_cleaning.py
 # Script to extract and clean clinical notes from raw files
 # Outputs cleaned notes into CSV files, splitting by size if needed
-####################################################################
+# to run:
+#RAW_NOTES_DIR="dir" PROCESSED_NOTES_DIR="dir" python extraction_and_cleaning.py
+###################################################################################
 import re
 import pandas as pd
 from pathlib import Path
@@ -39,6 +41,7 @@ def clean_and_format(text):
 # 2. Parser for each raw file
 # --------------------------------
 def parse_notes_file(file_path):
+    """Parse one raw notes file and return cleaned DataFrame."""
     notes = []
     with open(file_path, "r", encoding="utf-8", errors="replace") as f:
         for line in f:
@@ -81,6 +84,10 @@ def parse_notes_file(file_path):
 # 3. Batch processing across all files
 # --------------------------------
 def process_folder(folder_path, output_dir, start_idx=0, end_idx=None, split_after_gb=4.5):
+    """Process all files in folder_path, merge them into large CSVs
+    saved in output_dir, and start a new file once the current
+    merged CSV exceeds split_after_gb."""
+
     folder = Path(folder_path)
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -94,6 +101,12 @@ def process_folder(folder_path, output_dir, start_idx=0, end_idx=None, split_aft
     print(f"Found {len(files)} files in {folder_path}")
     print([f.name for f in files[:5]])  # show first few
 
+    total_size = 0
+    part = 1
+    output_file = output_dir / f"{Path(folder_path).stem}_{part:02d}.csv"
+    mode = "w"
+    header = True
+
     for i, fpath in enumerate(files, start=1):
         print(f"Processing file {i}/{len(files)}: {fpath.name}")
         df = parse_notes_file(fpath)
@@ -103,18 +116,17 @@ def process_folder(folder_path, output_dir, start_idx=0, end_idx=None, split_aft
         output_file = output_dir / f"{file_name}_{part:02d}.csv"
 
         # save first part
-        df.to_csv(output_file, index=False)
-
+        df.to_csv(output_file, mode=mode, header=header, index=False)
+        mode, header = "a", False  # append mode after first write
+        
         # check file size and rotate if above limit
-        total_size = output_file.stat().st_size / (1024**3)  
-        print(f"{file_name}: saved part {part:02d} ({total_size:.2f} GB)")
-
-        # if too big, sploit into multiple parts (per file)
-        while total_size >= split_after_gb:
-            part += 1
-            output_file = output_dir / f"{file_name}_{part:02d}.csv"
+        total_size = output_file.stat().st_size / (1024 ** 3)
+        if total_size >= split_after_gb and i < len(files):
             print(f"--> Reached {total_size:.2f} GB, starting new part...")
-            total_size = 0 
+            part += 1
+            output_file = output_dir / f"{Path(folder_path).stem}_{part:02d}.csv"
+            mode, header = "w", True
+            total_size = 0
 
         del df
 
@@ -125,8 +137,9 @@ def process_folder(folder_path, output_dir, start_idx=0, end_idx=None, split_aft
 # 4. Run main
 # --------------------------------
 if __name__ == "__main__":
-    input_folder = "/mnt/data/AUMC_data/raw/carenlp_dfiles1"
-    output_folder = "/mnt/data/AUMC_data/processed"
+
+    input_folder = Path(os.getenv("RAW_NOTES_DIR", "data/raw"))
+    output_folder = Path(os.getenv("PROCESSED_NOTES_DIR", "data/processed"))
 
     process_folder(input_folder, output_folder, start_idx=0, end_idx=None, split_after_gb=4.5)
     #process_folder(input_folder, output_folder, start_idx=0, end_idx=5, split_after_gb=0.1) #test run
