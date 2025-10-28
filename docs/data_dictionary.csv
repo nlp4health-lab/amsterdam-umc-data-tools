@@ -1,0 +1,18 @@
+﻿table_name,column_name,data_type,is_primary_key,is_foreign_key,description,example_value
+amc_notes,subject_id,TEXT,FALSE,FALSE,"""De-identified patient identifier""",""""""
+amc_notes,note_id,TEXT,FALSE,FALSE,"""Note identifier unique within a subject_id. They are not unique inter subjects.""",
+amc_notes,date_note,DATE,FALSE,FALSE,"""Date the note was written""",
+amc_notes,note_type,TEXT,FALSE,FALSE,"""Type or category of note (Brief, Consult, etc.)""","""Brief"""
+amc_notes,author_note,TEXT,FALSE,FALSE,"""Author of the note, when available.""","""Nurse"""
+amc_notes,note_text,TEXT,FALSE,FALSE,"""Full de-identified note text.""",
+amc_notes,uid,TEXT,TRUE,FALSE,"""Generated column combining subject_id and note_id""",
+notes_metadata,uid,TEXT,TRUE,,,
+notes_metadata,note_type,TEXT,FALSE,,,
+notes_metadata,uid,TEXT,FALSE,,,
+notes_metadata,char_length,INT,FALSE,,,
+notes_metadata,word_length,INT,FALSE,,,
+notes_metadata,token_length,INT,FALSE,,,
+notes_metadata,n_ziekenhuizen,INT,FALSE,,,
+notes_metadata,n_persons,INT,FALSE,,,
+notes_metadata,n_numbers,INT,FALSE,,,
+notes_metadata,source_file,TEXT,FALSE,,,
