@@ -1,7 +1,7 @@
 ﻿table_name,column_name,data_type,is_primary_key,is_foreign_key,description,example_value
 amc_notes,subject_id,TEXT,FALSE,FALSE,"""De-identified patient identifier""",""""""
 amc_notes,note_id,TEXT,TRUE,FALSE,"""Note identifier unique within a subject_id. They are not unique inter subjects.""",
-amc_notes,date_note,DATE,FALSE,FALSE,"""Date the note was written""",
+amc_notes,date_note,DATE,FALSE,FALSE,"""Date the note was written""", 2017-04-21
 amc_notes,note_type,TEXT,FALSE,FALSE,"""Type or category of note (Brief, Consult, etc.)""","""Brief"""
 amc_notes,author_note,TEXT,FALSE,FALSE,"""Author of the note, when available.""","""Nurse"""
 amc_notes,note_text,TEXT,FALSE,FALSE,"""Full de-identified note text.""",
