@@ -1,13 +1,14 @@
 ﻿table_name,column_name,data_type,is_primary_key,is_foreign_key,description,example_value
 amc_notes,subject_id,TEXT,FALSE,FALSE,"""De-identified patient identifier""",""""""
-amc_notes,note_id,TEXT,TRUE,FALSE,"""Note identifier. Unique across subject_ids, primary key.""",
+amc_notes,note_id,TEXT,TRUE,FALSE,"""Note identifier. Unique across subject_ids, primary key.""",""""""
 amc_notes,date_note,DATE,FALSE,FALSE,"""Date the note was written""", 2017-04-21
 amc_notes,note_type,TEXT,FALSE,FALSE,"""Type or category of note (Brief, Consult, etc.)""","""Brief"""
 amc_notes,author_note,TEXT,FALSE,FALSE,"""Author of the note, when available.""","""Nurse"""
-amc_notes,note_text,TEXT,FALSE,FALSE,"""Full de-identified note text.""",
-notes_metadata,subject_id,TEXT,FALSE,,,
-notes_metadata,note_id,TEXT,TRUE,,,
-notes_metadata,note_type,TEXT,FALSE,,,
-notes_metadata,char_length,INT,FALSE,,,
-notes_metadata,word_length,INT,FALSE,,,
-notes_metadata,source_file,TEXT,FALSE,,,
+amc_notes,note_text,TEXT,FALSE,FALSE,"""Full de-identified note text.""",""""""
+amc_notes_metadata,note_id,TEXT,TRUE,TRUE,"""Unique note identifier. Foreign key to amc_notes.note_id.""",""""""
+amc_notes_metadata,subject_id,TEXT,FALSE,FALSE,"""De-identified patient identifier associated with the note.""",""""""
+amc_notes_metadata,note_type,TEXT,FALSE,FALSE,"""Type or category of clinical note (same classification as in amc_notes).""","""Brief"""
+amc_notes_metadata,char_length,INTEGER,FALSE,FALSE,"""Number of characters in cleaned note text.""",14832
+amc_notes_metadata,word_length,INTEGER,FALSE,FALSE,"""Number of whitespace-separated words in the note text.""",2531
+amc_notes_metadata,token_length,INTEGER,FALSE,FALSE,"""Number of model tokenizer tokens (e.g., tiktoken o200k_base).""",3022
+amc_notes_metadata,source_file,TEXT,FALSE,FALSE,"""Original raw file where the note was extracted from.""","""merged_part_1_01.csv"""
