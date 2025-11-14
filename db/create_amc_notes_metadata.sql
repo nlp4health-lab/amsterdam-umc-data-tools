@@ -37,13 +37,13 @@ COMMENT ON COLUMN amc_notes_metadata.source_file IS 'Raw filename where the note
 --------------------------------------------------------------------------------
 -- Constraints
 
--- Foreign key to main notes table (optional, enable only after amc_notes exists)
+-- Foreign key to main notes table - link to main amc_notes table
 ALTER TABLE amc_notes_metadata
    ADD CONSTRAINT fk_metadata_note
    FOREIGN KEY (note_id) 
    REFERENCES amc_notes(note_id);
 
--- Ensure lengths are non-negative
+-- Ensure lengths are non-negative - just a sanity check
 ALTER TABLE amc_notes_metadata
   ADD CONSTRAINT chk_lengths_nonneg CHECK (
         char_length >= 0 AND
