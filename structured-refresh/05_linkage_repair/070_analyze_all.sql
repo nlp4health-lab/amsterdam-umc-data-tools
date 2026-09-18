@@ -1,0 +1,28 @@
+-- Every table in this pipeline is DROP + CREATE + re-populated from
+-- scratch each refresh (see README.md's "full drop-and-rebuild" model),
+-- and DROP TABLE wipes out that table's planner statistics along with
+-- it. Nothing else in this pipeline re-analyzes most tables afterward --
+-- 040_lab_result.sql's own ANALYZE calls are scoped to just the two
+-- tables its own join needs, not the other ~58. Until Postgres's
+-- autovacuum background process eventually catches up on its own (which
+-- can take a long time on tables this large), every query against a
+-- freshly rebuilt database runs on stale-or-missing statistics.
+--
+-- Found in production: a join against a 13-way UNION ALL view
+-- (v_clinical_timeline) chose a full top-level Merge Join over the
+-- entire ~300M-row unfiltered union instead of pushing a 5-thousand-row
+-- filter down into each branch, because the planner's row estimate for
+-- the join was off by 5 orders of magnitude (19 billion estimated rows
+-- for what should have been tens of thousands) -- a direct consequence
+-- of missing statistics on the underlying tables.
+--
+-- Placed at the end of 05_linkage_repair (not earlier) because this is
+-- the last stage that writes to amc_core data -- 02_core_clean populates
+-- it, 03_indices_fks and 04_quality_flags/05_linkage_repair itself keep
+-- adding columns and updating rows. Analyzing here captures every
+-- table's final state before 06_views/07_metadata, which only read.
+--
+-- ANALYZE samples rows rather than scanning full tables, so this is
+-- fast relative to everything upstream in this pipeline -- typically
+-- low minutes for a database this size, not hours.
+ANALYZE;
