@@ -46,12 +46,19 @@ def count_tokens(text: str) -> int:
 
 
 def process_row(row: dict, source_name: str) -> dict:
-    """Compute metadata for a single note row."""
+    """Compute metadata for a single note row.
+
+    Reads extraction_and_cleaning.py's output columns (pseudo_id,
+    patient_note_id, patient_note_category -- amc_notes's current
+    schema). Writes amc_notes_metadata's own columns (subject_id,
+    note_id, note_type), which were never renamed -- see
+    free-text-search/README.md.
+    """
     text = row.get("note_text", "") or ""
     return {
-        "subject_id": row.get("subject_id", ""),
-        "note_id": row.get("note_id", ""),
-        "note_type": row.get("note_type", ""),
+        "subject_id": row.get("pseudo_id", ""),
+        "note_id": row.get("patient_note_id", ""),
+        "note_type": row.get("patient_note_category", ""),
         "char_length": len(text),
         "word_length": len(text.split()),
         "token_length": count_tokens(text),
