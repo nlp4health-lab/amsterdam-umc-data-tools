@@ -1,0 +1,20 @@
+table_name,column_name,declared_type,review_comment,total_count,null_count,pct_before_2000,pct_after_2027,,
+amc_core.admission_partial_traject,admission_traject_discharge_date,date,to correct,2457377,0,0,0.07,,
+amc_core.admission_partial_traject,end_date,date,corrected,2457377,0,0,0.02,,
+amc_core.admission_traject,discharge_date,date,to correct,1285526,0,0,0.03,,
+amc_core.death_registration,date_transfer_mortuary,date,to correct,25392,16712,0,0.01,,
+amc_core.ecg_measurement,ecg_decrease_date,date,what do measurement in the past mean?,1336820,0,4.04,0,,
+amc_core.ic_procedure_note_central_venous_catheter,end_procedure,timestamptz,end procedure ongoing? Correct,10090,1778,0,0.01,,
+amc_core.imaging_study_order,end_date,date,what do past dates mean?,9815862,1585122,13.67,0,,
+amc_core.medication_administration,administration_date,date,to correct,62470437,0,0,0.01,,
+amc_core.medication_prescription,corrected_stop_date,date,to check,22697063,2515453,0,0,,
+amc_core.medication_prescription,start_date,date,past dates?,22697063,1458202,0.01,0,,
+amc_core.medication_prescription,start_date_time,timestamptz,future dates can be corrected,22697063,1458202,0.01,0,,
+amc_core.patient_appointment,appointment_start_moment,timestamptz,to correct,19497222,0,0,0,,
+amc_core.patient_appointment_line,appointment_start_moment,timestamptz,to correct,21914535,0,0,0,14907072,0.680236747
+amc_core.patient_contact,patient_contact_date,date,how to correct?,64304378,360284,2.61,0,1667177,0.025926337
+amc_core.patient_note_patient_contact,note_made_at_date_time,timestamptz,unreliable,92547925,0,45.13,0,,
+amc_core.patient_note_patient_contact,note_made_on_date,date,unreliable,92547925,0,45.13,0,,
+amc_core.patient_note_patient_contact,patient_contact_date_time,timestamptz,unreliable,92547925,0,31.35,0,,
+amc_core.problem_list,corrected_close_date,date,past dates?,2415479,2174491,0.64,0,33975,0.014065533
+amc_core.seh_trajectory,seh_departure_date,date,corrected,372264,0,0,0,,
