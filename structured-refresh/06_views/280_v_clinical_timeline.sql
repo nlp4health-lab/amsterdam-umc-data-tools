@@ -28,12 +28,15 @@ FROM amc_views.v_stays s
 
 UNION ALL
 
--- stays: discharge, as its own point-in-time event -- so ordering the
--- timeline by event_datetime surfaces the discharge moment directly,
--- instead of it only being visible as event_end_datetime on the
--- admission row above. v_stays already excludes ongoing/undischarged
--- stays (repo owner's call, for cleaner analyses), so end_datetime is
--- expected to be non-null here; guarded anyway.
+-- stays: discharge (admission_traject, seh_trajectory) or transfer_out
+-- (admission_partial_traject -- a subtraject/ward-segment ending mid-
+-- admission is a ward transfer, not a hospital discharge), as its own
+-- point-in-time event -- so ordering the timeline by event_datetime
+-- surfaces the moment directly, instead of it only being visible as
+-- event_end_datetime on the admission row above. v_stays already
+-- excludes ongoing/undischarged stays (repo owner's call, for cleaner
+-- analyses), so end_datetime is expected to be non-null here; guarded
+-- anyway.
 SELECT
     s.pseudo_id::text AS pseudo_id,
     s.patient_contact_id::text AS patient_contact_id,
@@ -41,9 +44,11 @@ SELECT
     NULL::timestamptz AS event_end_datetime,
     'stay'::text AS event_domain,
     s.stay_type::text AS event_type,
-    'discharge'::text AS event_subtype,
+    CASE WHEN s.stay_type = 'admission_partial_traject'
+         THEN 'transfer_out' ELSE 'discharge' END::text AS event_subtype,
     s.stay_id::text || ':discharge' AS event_id,
-    s.stay_type::text || ' discharge' AS event_label,
+    s.stay_type::text || CASE WHEN s.stay_type = 'admission_partial_traject'
+         THEN ' transfer out' ELSE ' discharge' END AS event_label,
     NULL::numeric AS value_numeric,
     NULL::text AS value_text,
     NULL::text AS unit,

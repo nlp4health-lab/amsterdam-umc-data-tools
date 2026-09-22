@@ -35,10 +35,13 @@ FROM amc_views.v_icu_stays s
 
 UNION ALL
 
--- ICU stays: discharge, as its own point-in-time event -- same reasoning
--- as v_clinical_timeline's stay/discharge split. v_icu_stays already
--- excludes ongoing partial stays, so icu_end_datetime is expected to be
--- non-null here; guarded anyway.
+-- ICU stays: discharge (this ICU segment is the last one in its
+-- admission_traject -- next stop is out of the hospital) or transfer_out
+-- (another admission_partial_traject segment, ICU or not, starts at/after
+-- this one ends, under the same admission_traject -- the patient moved
+-- wards, didn't leave). v_icu_stays already excludes ongoing partial
+-- stays, so icu_end_datetime is expected to be non-null here; guarded
+-- anyway.
 SELECT
     s.pseudo_id::text,
     NULL::text AS original_patient_contact_id,
@@ -52,9 +55,21 @@ SELECT
     NULL::timestamptz AS event_end_datetime,
     'icu_stay'::text AS event_domain,
     'icu_stay'::text AS event_type,
-    'discharge'::text AS event_subtype,
+    CASE WHEN EXISTS (
+        SELECT 1 FROM amc_core.admission_partial_traject next_apt
+        WHERE next_apt.admission_traject_id = s.admission_traject_id
+          AND next_apt.admission_partial_traject_id <> s.icu_stay_id
+          AND next_apt.start_date_time >= s.icu_end_datetime
+          AND NOT COALESCE(next_apt.ongoing_partial_stay, false)
+    ) THEN 'transfer_out' ELSE 'discharge' END::text AS event_subtype,
     s.icu_stay_id::text || ':discharge' AS event_id,
-    s.workplace::text || ' discharge' AS event_label,
+    s.workplace::text || CASE WHEN EXISTS (
+        SELECT 1 FROM amc_core.admission_partial_traject next_apt
+        WHERE next_apt.admission_traject_id = s.admission_traject_id
+          AND next_apt.admission_partial_traject_id <> s.icu_stay_id
+          AND next_apt.start_date_time >= s.icu_end_datetime
+          AND NOT COALESCE(next_apt.ongoing_partial_stay, false)
+    ) THEN ' transfer out' ELSE ' discharge' END AS event_label,
     NULL::numeric AS value_numeric,
     NULL::text AS value_text,
     NULL::text AS unit,
