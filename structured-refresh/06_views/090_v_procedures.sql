@@ -11,6 +11,13 @@
 -- 05_linkage_repair's probable_contact_id/probable_partial_traject_id for
 -- those two branches; every other branch has a real patient_contact_id and
 -- NULL::text for probable_partial_traject_id.
+--
+-- procedure_row_id: bronchoscopy/icarus (PRIMARY KEY (patient_contact_id,
+-- order_id) -- order_id alone isn't guaranteed unique there, unlike the
+-- other 5 IC tables) and the recovery branch (amc_core.procedures,
+-- PRIMARY KEY (pseudo_id, intervention_id)) build procedure_row_id from
+-- their table's full key, not just the id column, so two different
+-- patients can never collide into the same procedure_row_id.
 ------------------------------------------------------------------------------------------------------------
 
 DROP VIEW IF EXISTS amc_views.v_procedures CASCADE;
@@ -99,7 +106,7 @@ SELECT
     b.patient_contact_id,
     NULL::text AS probable_partial_traject_id,
     NULL::text AS admission_traject_id,
-    'ic_procedure_note_bronchoscopy:' || b.order_id::text AS procedure_row_id,
+    'ic_procedure_note_bronchoscopy:' || b.patient_contact_id || ':' || b.order_id::text AS procedure_row_id,
     b.order_id::text AS procedure_id,
     'ic_bronchoscopy' AS procedure_source,
     b.intervention_date_time AS procedure_datetime,
@@ -136,7 +143,7 @@ SELECT
     ic.patient_contact_id,
     NULL::text AS probable_partial_traject_id,
     NULL::text AS admission_traject_id,
-    'ic_procedure_note_icarus:' || ic.order_id::text AS procedure_row_id,
+    'ic_procedure_note_icarus:' || ic.patient_contact_id || ':' || ic.order_id::text AS procedure_row_id,
     ic.order_id::text AS procedure_id,
     'ic_icarus' AS procedure_source,
     ic.intervention_date_time AS procedure_datetime,
@@ -368,7 +375,7 @@ SELECT
     p.patient_contact_id,
     NULL::text AS probable_partial_traject_id,
     NULL::text AS admission_traject_id,
-    'procedures:' || p.intervention_id::text AS procedure_row_id,
+    'procedures:' || p.pseudo_id || ':' || p.intervention_id::text AS procedure_row_id,
     p.intervention_id::text AS procedure_id,
     'general_procedure_unmatched' AS procedure_source,
     p.intervention_date::timestamptz AS procedure_datetime,
