@@ -27,11 +27,10 @@ tables
 # occurs when a LOB column appears before other columns in this kind of
 # paginated ROW_NUMBER() query. Verified safe: for a table with no LOB
 # columns, or whose LOB columns already sit last, this ordering is
-# identical to the table's natural column order -- confirmed against
-# CaRe_NLP_table_metadata.csv (see
-# docs/superpowers/specs/2026-09-18-extraction-translation-pipeline-design.md),
+# identical to the table's natural column order,
 # where it only changes anything for 2 of 59 tables (the two that
-# previously needed the separate extract-problematic-tables.R retry).
+# previously needed the separate extract-problematic-tables.R retry
+#lab result and echo heart extract check).
 # -----------------------------
 save_table_in_chunks <- function(
     con,

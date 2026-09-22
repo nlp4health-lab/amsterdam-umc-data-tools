@@ -3,12 +3,10 @@
 R scripts that extract structured tables and note text from the raw NL
 exports and translate table/column names NL → EN (DeepL-assisted,
 human-reviewed). Every original ↔ translated pair is preserved in two
-mapping CSVs on the local data drive (not in this repo — they're data
-artifacts, not code): `mappings/column_mapping_second_pass.csv` (used
+mapping CSVs on the local data drive: `mappings/column_mapping_second_pass.csv` (used
 by `030`) and `mappings/file_name_mapping.csv` (used by `040`).
 
-Runs **locally**, not on the Helios cluster — R is not part of the cluster
-environment. Output CSVs need to land at the path `structured-refresh`
+Runs **locally**, not on the Helios cluster. Output CSVs need to land at the path `structured-refresh`
 expects as `$CSV_HOST` (see `../structured-refresh/README.md`) before
 running `01_raw_load`.
 

@@ -1,9 +1,7 @@
 # structured-refresh
 
 The bash + SQL pipeline that loads, cleans, keys, indexes, flags, and
-publishes the CaRe-NLP structured tables on the Helios cluster. Nothing in
-this directory may depend on Python or R — only what's already available
-via the Apptainer Postgres container and standard shell tools.
+publishes the CaRe-NLP structured tables on the Helios cluster. 
 
 ## Cluster access
 
@@ -45,10 +43,7 @@ exists only to get the new CSVs into Postgres as untyped text before
 one SQL file per table, numbered for order (e.g. `010_lab_result.sql`).
 All seven stages this reorg pass covers are migrated:
 `01_raw_load` → `02_core_clean` → `03_indices_fks` → `04_quality_flags` →
-`05_linkage_repair` → `06_views` → `07_metadata`. Stage 8
-(free-text-search) and stage 9 (cohort functions) are out of scope for
-this pass — see `docs/superpowers/specs/2026-08-28-repo-reorganization-design.md`
-("Out of scope for this pass").
+`05_linkage_repair` → `06_views` → `07_metadata`. 
 
 Note: unlike the earlier stages, `05_linkage_repair` depends on
 `04_quality_flags` having already run, not just `02_core_clean` — it reads
@@ -74,7 +69,7 @@ most tables afterward (autovacuum eventually catches up on its own, but
 that can take a long time on tables this large). Skipping this step is
 easy to miss the cost of: queries joining across many tables — especially
 through `06_views`'s widest views, e.g. `v_clinical_timeline`'s 13-way
-`UNION ALL` — can pick catastrophically bad plans on stale statistics
+`UNION ALL` — can select bad plans on stale statistics
 (a real incident: a 5,000-row filter join chose a full top-level sort
 over the entire ~300M-row unfiltered union instead of pushing the filter
 into each branch, because the row estimate was off by 5 orders of
