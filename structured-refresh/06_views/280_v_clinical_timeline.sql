@@ -3,7 +3,8 @@ DROP VIEW IF EXISTS amc_views.v_clinical_timeline;
 
 CREATE VIEW amc_views.v_clinical_timeline AS
 
--- stays
+-- stays: admission (interval row, event_end_datetime still carries the
+-- discharge moment for duration/overlap calculations)
 SELECT
     s.pseudo_id::text AS pseudo_id,
     s.patient_contact_id::text AS patient_contact_id,
@@ -11,7 +12,7 @@ SELECT
     s.end_datetime::timestamptz AS event_end_datetime,
     'stay'::text AS event_domain,
     s.stay_type::text AS event_type,
-    NULL::text AS event_subtype,
+    'admission'::text AS event_subtype,
     s.stay_id::text AS event_id,
     s.stay_type::text AS event_label,
     NULL::numeric AS value_numeric,
@@ -24,6 +25,36 @@ SELECT
     'v_stays'::text AS source_view,
     s.stay_id::text AS source_record_id
 FROM amc_views.v_stays s
+
+UNION ALL
+
+-- stays: discharge, as its own point-in-time event -- so ordering the
+-- timeline by event_datetime surfaces the discharge moment directly,
+-- instead of it only being visible as event_end_datetime on the
+-- admission row above. v_stays already excludes ongoing/undischarged
+-- stays (repo owner's call, for cleaner analyses), so end_datetime is
+-- expected to be non-null here; guarded anyway.
+SELECT
+    s.pseudo_id::text AS pseudo_id,
+    s.patient_contact_id::text AS patient_contact_id,
+    s.end_datetime::timestamptz AS event_datetime,
+    NULL::timestamptz AS event_end_datetime,
+    'stay'::text AS event_domain,
+    s.stay_type::text AS event_type,
+    'discharge'::text AS event_subtype,
+    s.stay_id::text || ':discharge' AS event_id,
+    s.stay_type::text || ' discharge' AS event_label,
+    NULL::numeric AS value_numeric,
+    NULL::text AS value_text,
+    NULL::text AS unit,
+    s.hospital_location::text AS hospital_location,
+    s.workplace::text AS workplace,
+    s.specialty::text AS specialty,
+    s.subspecialty::text AS subspecialty,
+    'v_stays'::text AS source_view,
+    s.stay_id::text AS source_record_id
+FROM amc_views.v_stays s
+WHERE s.end_datetime IS NOT NULL
 
 UNION ALL
 

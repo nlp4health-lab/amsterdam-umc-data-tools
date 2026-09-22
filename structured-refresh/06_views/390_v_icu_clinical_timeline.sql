@@ -3,7 +3,8 @@ DROP VIEW IF EXISTS amc_views.v_icu_clinical_timeline;
 
 CREATE VIEW amc_views.v_icu_clinical_timeline AS
 
--- ICU stays
+-- ICU stays: admission (interval row, event_end_datetime still carries
+-- the discharge moment for duration/overlap calculations)
 SELECT
     s.pseudo_id::text,
     NULL::text AS original_patient_contact_id,
@@ -17,7 +18,7 @@ SELECT
     s.icu_end_datetime::timestamptz AS event_end_datetime,
     'icu_stay'::text AS event_domain,
     'icu_stay'::text AS event_type,
-    NULL::text AS event_subtype,
+    'admission'::text AS event_subtype,
     s.icu_stay_id::text AS event_id,
     s.workplace::text AS event_label,
     NULL::numeric AS value_numeric,
@@ -31,6 +32,41 @@ SELECT
     s.icu_stay_id::text AS source_record_id,
     'icu_stay'::text AS icu_match_type
 FROM amc_views.v_icu_stays s
+
+UNION ALL
+
+-- ICU stays: discharge, as its own point-in-time event -- same reasoning
+-- as v_clinical_timeline's stay/discharge split. v_icu_stays already
+-- excludes ongoing partial stays, so icu_end_datetime is expected to be
+-- non-null here; guarded anyway.
+SELECT
+    s.pseudo_id::text,
+    NULL::text AS original_patient_contact_id,
+    s.patient_contact_id::text AS icu_patient_contact_id,
+    s.icu_stay_id::text,
+    s.admission_traject_id::text,
+    s.icu_start_datetime,
+    s.icu_end_datetime,
+    s.icu_los_hours,
+    s.icu_end_datetime::timestamptz AS event_datetime,
+    NULL::timestamptz AS event_end_datetime,
+    'icu_stay'::text AS event_domain,
+    'icu_stay'::text AS event_type,
+    'discharge'::text AS event_subtype,
+    s.icu_stay_id::text || ':discharge' AS event_id,
+    s.workplace::text || ' discharge' AS event_label,
+    NULL::numeric AS value_numeric,
+    NULL::text AS value_text,
+    NULL::text AS unit,
+    s.hospital_location::text,
+    s.workplace::text,
+    s.specialty::text,
+    s.subspecialty::text,
+    'v_icu_stays'::text AS source_view,
+    s.icu_stay_id::text AS source_record_id,
+    'icu_stay'::text AS icu_match_type
+FROM amc_views.v_icu_stays s
+WHERE s.icu_end_datetime IS NOT NULL
 
 UNION ALL
 
