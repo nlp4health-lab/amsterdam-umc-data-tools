@@ -8,6 +8,13 @@ The database refreshes as a **full replace**, not an append — patient
 pseudo-ids can change between data pulls — so every piece here is built to
 be dropped and rebuilt safely and quickly, not migrated incrementally.
 
+## First time here?
+
+**[`docs/instructions/`](docs/instructions/)** covers cluster/database
+setup: getting access, starting/stopping/connecting to the shared
+Postgres instance, creating a fresh database in Apptainer, and backup
+and restore. Start there before the pipeline steps below.
+
 ## Steps, in order
 
 1. **[`extraction-translation/`](extraction-translation/README.md)** —
@@ -31,7 +38,8 @@ report on it, and can be run any time afterward:
 
 - **[`docs/data-dictionary/`](docs/data-dictionary/)** — column-level
   documentation for every table: data type, primary/foreign keys, and a
-  short description. Generated output loaded into `meta.data_dictionary` by
+  short description. Generated output, not committed (see
+  `.gitignore`) — loaded into `meta.data_dictionary` by
   `structured-refresh/07_metadata/070_data_dictionary.sql`.
 - **[`analysis/`](analysis/README.md)** — data-quality assessment,
   exploratory/landscape queries, and ICU cohort methodology. Read-only
