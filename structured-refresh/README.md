@@ -1,12 +1,14 @@
 # structured-refresh
 
 The bash + SQL pipeline that loads, cleans, keys, indexes, flags, and
-publishes the CaRe-NLP structured tables on the Helios cluster. 
+publishes the CaRe-NLP structured tables on the Helios cluster.
 
 ## Cluster access
 
 The PostgreSQL data directory is shared — only one server instance can run
-at a time. Users on the same cluster node (check with `hostname`; for example: `hpcloginresearch01.cluster`) can share a running instance; users on different nodes cannot.
+at a time. Users on the same cluster node (check with `hostname`; the
+current author's is `hpcloginresearch01.cluster`) can share a running
+instance; users on different nodes cannot.
 
 Add to your shell profile:
 
@@ -24,9 +26,11 @@ alias psqlcarenlp='apptainer exec -B ${PGDATA_HOST}:/var/lib/postgresql/data -B 
 Typical workflow: `pgstatus` → (if not running) `pgstart` → `psqlcarenlp` →
 `\q` when done → `pgstop` once nobody else needs the server.
 
-`CSV_HOST` is where `extraction-translation/`'s output CSVs need to land
-(mounted read-only at `/csv` inside the container) before running
-`01_raw_load`.
+`CSV_HOST` is the shared group `scripts` folder — the same one
+`07_metadata`'s CSVs (`data_dictionary.csv`, `name_mapping.csv`) already
+live in, not a personal scratch directory. It's where
+`extraction-translation/`'s output CSVs need to land (mounted read-only
+at `/csv` inside the container) before running `01_raw_load`.
 
 ## Refresh model
 
@@ -43,7 +47,7 @@ exists only to get the new CSVs into Postgres as untyped text before
 one SQL file per table, numbered for order (e.g. `010_lab_result.sql`).
 All seven stages this reorg pass covers are migrated:
 `01_raw_load` → `02_core_clean` → `03_indices_fks` → `04_quality_flags` →
-`05_linkage_repair` → `06_views` → `07_metadata`. 
+`05_linkage_repair` → `06_views` → `07_metadata`.
 
 Note: unlike the earlier stages, `05_linkage_repair` depends on
 `04_quality_flags` having already run, not just `02_core_clean` — it reads
