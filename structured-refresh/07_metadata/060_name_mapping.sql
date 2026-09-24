@@ -1,7 +1,10 @@
--- The \copy paths below (/net/beegfs/groups/care-nlp-db/carenlp/scripts/*.csv)
--- are reachable from inside the Apptainer container psql runs in (confirmed
--- 2026-09-04 -- that whole tree is accessible regardless of $CSV_HOST/the
--- refresh.sh bind mounts), so these load correctly as absolute paths.
+-- \copy paths below are /csv/*.csv -- refresh.sh binds $CSV_HOST
+-- (/net/beegfs/groups/care-nlp-db/carenlp/scripts) at /csv inside the
+-- Apptainer container; the full host path is NOT otherwise reachable
+-- from in there (confirmed 2026-09-24 -- a prior 2026-09-04 note here
+-- claiming the whole tree was reachable regardless of binds was wrong,
+-- or the cluster's Apptainer config changed since). These CSVs live in
+-- that same $CSV_HOST folder.
 
 DROP TABLE IF EXISTS meta.name_mapping CASCADE;
 
@@ -16,11 +19,11 @@ CREATE TABLE meta.name_mapping (
 -- Load table names: set the default, copy, then drop the default again
 ALTER TABLE meta.name_mapping ALTER COLUMN entity_type SET DEFAULT 'table';
 
-\copy meta.name_mapping (original_name, translated_name) FROM '/net/beegfs/groups/care-nlp-db/carenlp/scripts/file_name_mapping-copy.csv' WITH (FORMAT csv, HEADER true)
+\copy meta.name_mapping (original_name, translated_name) FROM '/csv/file_name_mapping-copy.csv' WITH (FORMAT csv, HEADER true)
 
 -- Load column names: same trick, different default
 ALTER TABLE meta.name_mapping ALTER COLUMN entity_type SET DEFAULT 'column';
 
-\copy meta.name_mapping (original_name, translated_name, note) FROM '/net/beegfs/groups/care-nlp-db/carenlp/scripts/column_mapping.csv' WITH (FORMAT csv, HEADER true)
+\copy meta.name_mapping (original_name, translated_name, note) FROM '/csv/column_mapping.csv' WITH (FORMAT csv, HEADER true)
 
 ALTER TABLE meta.name_mapping ALTER COLUMN entity_type DROP DEFAULT;
