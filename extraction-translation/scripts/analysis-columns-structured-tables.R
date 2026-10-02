@@ -8,8 +8,12 @@
 
 library(data.table)
 
+# connection_config.R is gitignored -- copy connection_config.R.example
+# to create your own (see README.md).
+source("connection_config.R")
+
 # ---- CONFIG ----
-folder <- "G:/divjk/kik/NLP/AUMC_data/structured_data_translated"  
+folder <- file.path(data_root, "structured_data_translated")
 out_csv <- file.path(folder, "csv_columns_index.csv")
 
 # ---- HELPERS ----

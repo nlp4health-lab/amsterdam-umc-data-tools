@@ -5,9 +5,13 @@
 library(data.table)
 library(deeplr)
 
+# connection_config.R is gitignored -- copy connection_config.R.example
+# to create your own (see README.md).
+source("connection_config.R")
+
 # Paths (edit these)
-raw_dir       <- "G:/divjk/kik/NLP/AUMC_data/structured_data"
-translated_dir <- "G:/divjk/kik/NLP/AUMC_data/structured_data_copy"
+raw_dir       <- file.path(data_root, "structured_data")
+translated_dir <- file.path(data_root, "structured_data_copy")
 
 # Make sure output folder exists
 if (!dir.exists(translated_dir)) dir.create(translated_dir)
@@ -179,7 +183,7 @@ message("Second-stage mapping saved.")
 
 message("STEP 6: Applying translations to all CSV files...")
 
-mapping <- fread("G:/divjk/kik/NLP/AUMC_data/structured_data_copy/column_mapping_second_pass.csv")
+mapping <- fread(file.path(translated_dir, "column_mapping_second_pass.csv"))
 
 files <- list.files(translated_dir, full.names = TRUE, pattern = "\\.csv$")
 

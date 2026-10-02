@@ -1,7 +1,11 @@
 library(data.table)
 library(httr)
 
-structured_dir <- "G:/divjk/kik/NLP/AUMC_data/structured_data_copy"   # your directory
+# connection_config.R is gitignored -- copy connection_config.R.example
+# to create your own (see README.md).
+source("connection_config.R")
+
+structured_dir <- file.path(data_root, "structured_data_copy")
 
 # Add your DeepL API key via the DEEPL_API_KEY environment variable
 DEEPL_KEY <- Sys.getenv("DEEPL_API_KEY")

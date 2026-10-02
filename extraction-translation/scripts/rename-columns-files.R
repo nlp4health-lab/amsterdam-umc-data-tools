@@ -9,15 +9,19 @@ library(tools)
 # CONFIG — edit these paths
 ###############################################################
 
+# connection_config.R is gitignored -- copy connection_config.R.example
+# to create your own (see README.md).
+source("connection_config.R")
+
 # Source folder with the original structured CSVs
-src_dir <- "G:/divjk/kik/NLP/AUMC_data/structured_data"
+src_dir <- file.path(data_root, "structured_data")
 
 # Destination folder (will be created; must NOT already contain your source files)
-dst_dir <- "G:/divjk/kik/NLP/AUMC_data/structured_data_translated"
+dst_dir <- file.path(data_root, "structured_data_translated")
 
 # Mappings
-col_map_path  <- "G:/divjk/kik/NLP/AUMC_data/mappings/column_mapping_second_pass.csv"
-file_map_path <- "G:/divjk/kik/NLP/AUMC_data/mappings/file_name_mapping.csv"
+col_map_path  <- file.path(data_root, "mappings/column_mapping_second_pass.csv")
+file_map_path <- file.path(data_root, "mappings/file_name_mapping.csv")
 
 # If TRUE: overwrite existing files in dst_dir
 overwrite <- TRUE
