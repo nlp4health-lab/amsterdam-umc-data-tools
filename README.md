@@ -36,11 +36,7 @@ and restore. Start there before the pipeline steps below.
 Steps 1-3 populate the database. The two directories below describe and
 report on it, and can be run any time afterward:
 
-- **[`docs/data-dictionary/`](docs/data-dictionary/)** — column-level
-  documentation for every table: data type, primary/foreign keys, and a
-  short description. Generated output, not committed (see
-  `.gitignore`) — loaded into `meta.data_dictionary` by
-  `structured-refresh/07_metadata/070_data_dictionary.sql`.
+
 - **[`analysis/`](analysis/README.md)** — data-quality assessment,
   exploratory/landscape queries, and ICU cohort methodology. Read-only
   reporting, not part of the automated refresh.

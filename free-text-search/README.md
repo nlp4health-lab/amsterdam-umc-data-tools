@@ -36,14 +36,6 @@ Run by hand, in order, same as `extraction-translation/` — not part of
    Uses `CONCURRENTLY`, so it's safe to run without locking the table,
    but takes a while over ~38.7M rows.
 
-## Reference / predecessor scripts (not part of the run order)
 
-- `scripts/preprocessing_free_text.py` (+ `preprocessing_free_text_test.py`)
-  — an earlier exploration of the same cleaning logic, tested against a
-  separately merged file (`merged_carenlp_1.csv`, a single `note` column)
-  rather than the raw tab-separated files `010_extraction_and_cleaning.py`
-  parses. Several experimental structure-formatting rules are commented
-  out. Its exact relationship to `010`'s cleaning function is unconfirmed
-  — likely an earlier draft later refined into `010`'s version — kept for
-  reference.
+
 
