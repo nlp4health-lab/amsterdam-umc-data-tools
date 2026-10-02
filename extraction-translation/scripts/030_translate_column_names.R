@@ -4,16 +4,20 @@
 
 library(data.table)
 
+# connection_config.R is gitignored -- copy connection_config.R.example
+# to create your own (see README.md).
+source("connection_config.R")
+
 # SET THIS EACH RUN -- must match 010's output_dir for this run
 # (the folder holding the raw extracted CSVs to translate).
-raw_dir <- "G:/divjk/kik/NLP/AUMC_data/structured_data_SET_DATE_HERE"
+raw_dir <- file.path(data_root, "structured_data_SET_DATE_HERE")
 
 # SET THIS EACH RUN -- new folder this script creates and populates.
 # 040 and 050 both operate on this same folder afterward -- keep all
 # three in sync.
-translated_dir <- "G:/divjk/kik/NLP/AUMC_data/structured_data_SET_DATE_HERE_copy"
+translated_dir <- file.path(data_root, "structured_data_SET_DATE_HERE_copy")
 
-mapping_file <- "G:/divjk/kik/NLP/AUMC_data/mappings/column_mapping_second_pass.csv"
+mapping_file <- file.path(data_root, "mappings/column_mapping_second_pass.csv")
 
 if (!dir.exists(translated_dir)) {
   dir.create(translated_dir, recursive = TRUE)

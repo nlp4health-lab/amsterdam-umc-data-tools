@@ -2,6 +2,10 @@ library(DBI)
 library(odbc)
 library(data.table)
 
+# connection_config.R is gitignored -- copy connection_config.R.example
+# to create your own (see README.md).
+source("connection_config.R")
+
 # ============================================================
 # CONNECT TO SQL SERVER
 # ============================================================
@@ -9,8 +13,8 @@ library(data.table)
 con <- dbConnect(
   odbc(),
   Driver = "SQL Server",
-  Server = "p1wp10012-bi-us.prod1.umcinfra.nl",
-  Database = "Uitgifte",
+  Server = sql_server_host,
+  Database = sql_server_db,
   Trusted_connection = "yes",
   timeout = 60,
   Port = 1433
@@ -24,10 +28,7 @@ con <- dbConnect(
 # SET THIS EACH RUN -- recommended: the same folder as 010's
 # output_dir for this run, so extraction output and metadata live
 # together.
-output_dir <- paste0(
-  "G:/divjk/kik/NLP/AUMC_data/",
-  "structured_data_SET_DATE_HERE/"
-)
+output_dir <- file.path(data_root, "structured_data_SET_DATE_HERE/")
 
 dir.create(
   output_dir,

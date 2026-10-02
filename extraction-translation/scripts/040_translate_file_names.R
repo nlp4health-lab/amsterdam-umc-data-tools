@@ -1,9 +1,13 @@
 library(data.table)
 
+# connection_config.R is gitignored -- copy connection_config.R.example
+# to create your own (see README.md).
+source("connection_config.R")
+
 # SET THIS EACH RUN -- must match 030's translated_dir exactly
 # (renames the files 030 already created there, in place).
-new_dir <- "G:/divjk/kik/NLP/AUMC_data/structured_data_SET_DATE_HERE_copy"
-mapping_file <- "G:/divjk/kik/NLP/AUMC_data/mappings/file_name_mapping.csv"
+new_dir <- file.path(data_root, "structured_data_SET_DATE_HERE_copy")
+mapping_file <- file.path(data_root, "mappings/file_name_mapping.csv")
 
 mapping_files <- fread(mapping_file)
 

@@ -2,14 +2,18 @@ library(DBI)
 library(odbc)
 library(data.table)
 
+# connection_config.R is gitignored -- copy connection_config.R.example
+# to create your own (see README.md).
+source("connection_config.R")
+
 # -----------------------------
 # Connect to SQL Server
 # -----------------------------
 con <- dbConnect(
   odbc(),
   Driver = "SQL Server",
-  Server = "p1wp10012-bi-us.prod1.umcinfra.nl",
-  Database = "Uitgifte",
+  Server = sql_server_host,
+  Database = sql_server_db,
   Trusted_connection = "yes",
   timeout = 60,
   Port = 1433
@@ -27,10 +31,11 @@ tables
 # occurs when a LOB column appears before other columns in this kind of
 # paginated ROW_NUMBER() query. Verified safe: for a table with no LOB
 # columns, or whose LOB columns already sit last, this ordering is
-# identical to the table's natural column order,
+# identical to the table's natural column order -- confirmed against
+# CaRe_NLP_table_metadata.csv (see
+# docs/superpowers/specs/2026-09-18-extraction-translation-pipeline-design.md),
 # where it only changes anything for 2 of 59 tables (the two that
-# previously needed the separate extract-problematic-tables.R retry
-#lab result and echo heart extract check).
+# previously needed the separate extract-problematic-tables.R retry).
 # -----------------------------
 save_table_in_chunks <- function(
     con,
@@ -134,7 +139,7 @@ save_table_in_chunks <- function(
 # -----------------------------
 # SET THIS EACH RUN -- date-stamp the folder for this extract, matching
 # the convention the prior scripts used (e.g. structured_data_27_08_26).
-output_dir <- "G:/divjk/kik/NLP/AUMC_data/structured_data_SET_DATE_HERE/"
+output_dir <- file.path(data_root, "structured_data_SET_DATE_HERE/")
 
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 

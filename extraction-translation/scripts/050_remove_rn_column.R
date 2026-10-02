@@ -1,8 +1,12 @@
 library(data.table)
 
+# connection_config.R is gitignored -- copy connection_config.R.example
+# to create your own (see README.md).
+source("connection_config.R")
+
 # SET THIS EACH RUN -- must match 030/040's translated_dir
 # (the same folder 040 already renamed files in).
-folder <- "G:/divjk/kik/NLP/AUMC_data/structured_data_SET_DATE_HERE_copy/"
+folder <- file.path(data_root, "structured_data_SET_DATE_HERE_copy/")
 
 # Find all CSV files
 csv_files <- list.files(
