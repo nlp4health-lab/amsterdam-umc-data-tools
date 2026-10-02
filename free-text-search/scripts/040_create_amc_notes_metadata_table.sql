@@ -5,11 +5,6 @@
 --    Metadata extracted from cleaned clinical notes (character, word, token counts,
 --    and original source file location). Each row corresponds to one note.
 --
---  Reflects the table's current live schema (confirmed via \d+ against
---  carenlp_db, 2026-09-21) -- unlike amc_notes, this table's columns
---  (note_id, subject_id, note_type) were never renamed, even though
---  030_metadata_extraction.py's input now comes from amc_notes's renamed
---  columns (patient_note_id, pseudo_id, patient_note_category).
 -- =============================================================================
 
 CREATE TABLE IF NOT EXISTS amc_core.amc_notes_metadata (
