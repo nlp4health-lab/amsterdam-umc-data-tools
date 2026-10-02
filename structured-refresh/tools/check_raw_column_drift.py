@@ -6,16 +6,6 @@ Read-only report: compares each real CSV's header row against the
 column list declared in its structured-refresh/01_raw_load/*.sql file,
 column by column, by position.
 
-This is the raw-layer sibling to check_metadata_drift.sql, which only
-covers amc_core/amc_views columns vs. meta.catalog/meta.data_dictionary
-documentation. Neither of those catches drift *before* it reaches the
-database -- if a source extract adds, drops, renames, or reorders a raw
-CSV column, \\copy (used with no explicit column list throughout this
-repo) loads purely by position. A dropped column usually fails loudly
-(Postgres errors on a column-count mismatch). A same-count REORDER does
-not -- it loads silently into the wrong columns. This script is the only
-thing in the repo that checks for that specific case.
-
 Needs no database connection and no Apptainer container -- it only reads
 CSV files and this repo's own .sql files, so it can run anywhere the CSV
 directory is reachable (including outside the cluster, if the CSVs are
@@ -81,7 +71,7 @@ def real_header(csv_host, csv_prefix):
     path = os.path.join(csv_host, f"{csv_prefix}_part1.csv")
     if not os.path.exists(path):
         return None, path
-    # utf-8-sig strips a leading BOM if present (harmless no-op if not) --
+    # utf-8-sig strips a leading BOM if present --
     # common on Windows-exported CSVs, and would otherwise silently
     # corrupt the first column's name (e.g. '﻿pseudo_id').
     with open(path, newline='', encoding='utf-8-sig') as f:

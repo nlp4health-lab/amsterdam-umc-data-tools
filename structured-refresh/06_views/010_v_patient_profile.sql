@@ -4,8 +4,7 @@ CREATE SCHEMA IF NOT EXISTS amc_views;
 -- amc_views.v_patient_profile
 -- death_date_time (on patient_not_traceable itself) is the direct source
 -- of truth for death timing -- death_registration is deliberately not
--- joined here (see docs/superpowers/specs/2026-08-28-repo-reorganization-design.md,
--- "06_views" stage status, death-data content update).
+-- joined here
 ------------------------------------------------------------------------------------------------------------
 CREATE OR REPLACE VIEW amc_views.v_patient_profile AS
 WITH latest_tobacco AS (

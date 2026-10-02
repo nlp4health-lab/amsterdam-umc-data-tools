@@ -6,14 +6,7 @@
 -- neither in meta.catalog's curated identifier_columns/date_columns,
 -- nor in meta.data_dictionary.
 --
--- Nothing in 07_metadata auto-detects new columns (the one script that
--- did, refresh_meta_stats_auto.sql, was archived once meta.catalog's
--- initial curation was complete -- see structured-refresh/archive/NOTES.md).
--- So if a column gets added upstream (a schema change in an earlier
--- stage, or a genuinely new source column in a data pull) after the
--- catalog was curated, it will not appear anywhere in meta.catalog or
--- meta.data_dictionary automatically -- it's simply absent, with no
--- warning. Run this manually whenever you suspect drift (e.g. right
+-- Run this manually whenever you suspect drift (e.g. right
 -- after a schema change, or periodically) to see what needs curating.
 --
 -- Cheap and safe to run anytime: pure information_schema/meta-table
