@@ -5,6 +5,11 @@ CREATE VIEW amc_views.v_clinical_timeline AS
 
 -- stays: admission (interval row, event_end_datetime still carries the
 -- discharge moment for duration/overlap calculations)
+-- value_numeric/unit carry hospital_los_hours here -- the whole
+-- hospital admission's duration (see v_stays), not just this row's own
+-- segment -- reusing the same generic numeric-value slot every other
+-- domain in this view already uses, rather than widening the view's
+-- shape with a stay-specific column.
 SELECT
     s.pseudo_id::text AS pseudo_id,
     s.patient_contact_id::text AS patient_contact_id,
@@ -15,9 +20,9 @@ SELECT
     'admission'::text AS event_subtype,
     s.stay_id::text AS event_id,
     s.stay_type::text AS event_label,
-    NULL::numeric AS value_numeric,
+    s.hospital_los_hours::numeric AS value_numeric,
     NULL::text AS value_text,
-    NULL::text AS unit,
+    'hours'::text AS unit,
     s.hospital_location::text AS hospital_location,
     s.workplace::text AS workplace,
     s.specialty::text AS specialty,
@@ -49,9 +54,9 @@ SELECT
     s.stay_id::text || ':discharge' AS event_id,
     s.stay_type::text || CASE WHEN s.stay_type = 'admission_partial_traject'
          THEN ' transfer out' ELSE ' discharge' END AS event_label,
-    NULL::numeric AS value_numeric,
+    s.hospital_los_hours::numeric AS value_numeric,
     NULL::text AS value_text,
-    NULL::text AS unit,
+    'hours'::text AS unit,
     s.hospital_location::text AS hospital_location,
     s.workplace::text AS workplace,
     s.specialty::text AS specialty,
