@@ -14,6 +14,7 @@ SELECT
     icu.icu_start_datetime,
     icu.icu_end_datetime,
     icu.icu_los_hours,
+    icu.died_during_stay,
 
     n.treatment_datetime,
     n.meet_date,

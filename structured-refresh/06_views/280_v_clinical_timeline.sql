@@ -9,7 +9,8 @@ CREATE VIEW amc_views.v_clinical_timeline AS
 -- hospital admission's duration (see v_stays), not just this row's own
 -- segment -- reusing the same generic numeric-value slot every other
 -- domain in this view already uses, rather than widening the view's
--- shape with a stay-specific column.
+-- shape with a stay-specific column. value_text carries
+-- died_during_stay ('true'/'false'), the same reuse-not-widen choice.
 SELECT
     s.pseudo_id::text AS pseudo_id,
     s.patient_contact_id::text AS patient_contact_id,
@@ -21,7 +22,7 @@ SELECT
     s.stay_id::text AS event_id,
     s.stay_type::text AS event_label,
     s.hospital_los_hours::numeric AS value_numeric,
-    NULL::text AS value_text,
+    s.died_during_stay::text AS value_text,
     'hours'::text AS unit,
     s.hospital_location::text AS hospital_location,
     s.workplace::text AS workplace,
@@ -55,7 +56,7 @@ SELECT
     s.stay_type::text || CASE WHEN s.stay_type = 'admission_partial_traject'
          THEN ' transfer out' ELSE ' discharge' END AS event_label,
     s.hospital_los_hours::numeric AS value_numeric,
-    NULL::text AS value_text,
+    s.died_during_stay::text AS value_text,
     'hours'::text AS unit,
     s.hospital_location::text AS hospital_location,
     s.workplace::text AS workplace,

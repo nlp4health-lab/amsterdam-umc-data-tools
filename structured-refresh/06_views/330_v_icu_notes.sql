@@ -32,6 +32,7 @@ SELECT
     icu.icu_start_datetime,
     icu.icu_end_datetime,
     icu.icu_los_hours,
+    icu.died_during_stay,
 
     CASE
         WHEN n.patient_contact_id IS NOT NULL

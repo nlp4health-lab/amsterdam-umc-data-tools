@@ -27,6 +27,18 @@ SELECT
         )
     ) / 3600.0 AS hospital_los_hours,
 
+    -- died_during_stay: death_date_time (the sole source of truth for
+    -- death timing in views -- never death_registration/discharge_location)
+    -- falls within THIS ICU segment's own start/end window. Distinct from
+    -- p.is_deceased below, which just means "died at some point, ever,"
+    -- not necessarily during this stay.
+    CASE
+        WHEN p.death_date_time IS NOT NULL
+         AND p.death_date_time >= apt.start_date_time
+         AND p.death_date_time <= apt.corrected_end_date_time
+        THEN true ELSE false
+    END AS died_during_stay,
+
     apt.hospital_location,
     apt.workplace,
     apt.specialty,
