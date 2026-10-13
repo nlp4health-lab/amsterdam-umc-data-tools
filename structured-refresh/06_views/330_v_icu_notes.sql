@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------------------
-DROP VIEW IF EXISTS amc_views.v_icu_notes;
+DROP VIEW IF EXISTS amc_views.v_icu_notes CASCADE;
 
 CREATE VIEW amc_views.v_icu_notes AS
 

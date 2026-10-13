@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
-DROP VIEW IF EXISTS amc_views.v_nephrology_treatments;
+DROP VIEW IF EXISTS amc_views.v_nephrology_treatments CASCADE;
 
 CREATE VIEW amc_views.v_nephrology_treatments AS
 

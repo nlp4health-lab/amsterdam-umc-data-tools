@@ -1,4 +1,4 @@
-DROP VIEW IF EXISTS amc_views.v_icu_procedures;
+DROP VIEW IF EXISTS amc_views.v_icu_procedures CASCADE;
 
 CREATE VIEW amc_views.v_icu_procedures AS
 

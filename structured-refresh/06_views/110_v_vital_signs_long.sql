@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------------------
-DROP VIEW IF EXISTS amc_views.v_vital_signs_long;
+DROP VIEW IF EXISTS amc_views.v_vital_signs_long CASCADE;
 
 -- ── Combined table: ONLY for measures with no individual table equivalent ──
 

@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------
 
-DROP VIEW IF EXISTS amc_views.v_medical_history;
+DROP VIEW IF EXISTS amc_views.v_medical_history CASCADE;
 
 CREATE VIEW amc_views.v_medical_history AS
 

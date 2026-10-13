@@ -1,5 +1,13 @@
 --------------------------------------------------------------------------------------------------------------
-DROP VIEW IF EXISTS amc_views.v_diagnoses_longitudinal;
+-- is_chief_problem is normalized to 'true'/'false' text for BOTH
+-- sources: medical_diagnosis has no such column, so it's derived from
+-- diagnosis_type; problem_list has a real is_chief_problem column, but
+-- its actual values are 'Ja'/NULL (Dutch, confirmed against live data
+-- 2026-09-25), not 'true'/'false' -- normalized here rather than left
+-- as a raw passthrough, so every consumer (e.g.
+-- cohort_functions.cohort_by_diagnosis_code's primary_only filter)
+-- gets one consistent convention regardless of source.
+DROP VIEW IF EXISTS amc_views.v_diagnoses_longitudinal CASCADE;
 
 CREATE VIEW amc_views.v_diagnoses_longitudinal AS
 
@@ -53,6 +61,9 @@ SELECT
     NULL::text AS specialty,
     pl.is_chronic,
     NULL::text AS is_complication,
-    pl.is_chief_problem,
+    CASE
+        WHEN pl.is_chief_problem = 'Ja' THEN 'true'
+        ELSE 'false'
+    END AS is_chief_problem,
     pl.hospital_location
 FROM amc_core.problem_list pl;

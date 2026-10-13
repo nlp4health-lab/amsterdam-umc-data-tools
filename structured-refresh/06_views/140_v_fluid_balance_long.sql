@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------------------
-DROP VIEW IF EXISTS amc_views.v_fluid_balance_long;
+DROP VIEW IF EXISTS amc_views.v_fluid_balance_long CASCADE;
 
 CREATE VIEW amc_views.v_fluid_balance_long AS
 

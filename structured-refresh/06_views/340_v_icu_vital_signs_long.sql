@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------------
-DROP VIEW IF EXISTS amc_views.v_icu_vital_signs_long;
+DROP VIEW IF EXISTS amc_views.v_icu_vital_signs_long CASCADE;
 
 CREATE VIEW amc_views.v_icu_vital_signs_long AS
 

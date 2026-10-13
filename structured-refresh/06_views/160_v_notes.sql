@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------------------
-DROP VIEW IF EXISTS amc_views.v_notes;
+DROP VIEW IF EXISTS amc_views.v_notes CASCADE;
 
 -- patient_note_contains_sensitive_information was retired (2026-09-11
 -- extract: its CSV is gone from the source, confirmed no replacement) --

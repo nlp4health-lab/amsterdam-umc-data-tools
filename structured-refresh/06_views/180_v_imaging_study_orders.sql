@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
-DROP VIEW IF EXISTS amc_views.v_imaging_study_orders;
+DROP VIEW IF EXISTS amc_views.v_imaging_study_orders CASCADE;
 
 CREATE VIEW amc_views.v_imaging_study_orders AS
 

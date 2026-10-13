@@ -1,4 +1,4 @@
-DROP VIEW IF EXISTS amc_views.v_ecg_exams;
+DROP VIEW IF EXISTS amc_views.v_ecg_exams CASCADE;
 
 CREATE VIEW amc_views.v_ecg_exams AS
 

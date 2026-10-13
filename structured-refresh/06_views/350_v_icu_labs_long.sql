@@ -1,4 +1,4 @@
-DROP VIEW IF EXISTS amc_views.v_icu_labs_long;
+DROP VIEW IF EXISTS amc_views.v_icu_labs_long CASCADE;
 
 CREATE VIEW amc_views.v_icu_labs_long AS
 

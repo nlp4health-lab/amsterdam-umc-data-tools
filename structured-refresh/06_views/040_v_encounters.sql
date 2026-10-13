@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------------------------------------
 -- This view combines encounters from patient_contact, patient_appointment, admission_traject, and seh_trajectory.
 
-DROP VIEW IF EXISTS amc_views.v_encounters;
+DROP VIEW IF EXISTS amc_views.v_encounters CASCADE;
 
 CREATE VIEW amc_views.v_encounters AS
 

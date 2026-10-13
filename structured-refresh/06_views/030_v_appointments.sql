@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------------------------------------
 -- This view combines appointments from patient_appointment and patient_appointment_line. Since there is no unique identifier for appointments, we keep all records from both tables and indicate the source table and record id. This means that if an appointment has records in both tables, it will appear twice in the view, once with source_table = 'patient_appointment' and once with source_table = 'patient_appointment_line'. The linkage_quality column indicates whether the appointment is linked to a patient contact (linked_contact) or not (orphan_contact), which can be used as a quality check for analyses focusing on appointments linked to patient contacts.
-DROP VIEW IF EXISTS amc_views.v_appointments;
+DROP VIEW IF EXISTS amc_views.v_appointments CASCADE;
 
 CREATE VIEW amc_views.v_appointments AS
 
