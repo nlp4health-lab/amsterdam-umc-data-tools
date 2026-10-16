@@ -49,3 +49,14 @@ FROM cohort_functions.timeline_for_cohort(
     ARRAY['stay', 'lab'],
     '2023-01-01', '2024-01-01'
 );
+
+-- Example 7: structured + unstructured combined -- heart failure
+-- patients (coded diagnosis) whose notes also mention delirium, a
+-- concept that may never have been formally coded as its own
+-- diagnosis. Neither function alone can answer this; INTERSECT is all
+-- that's needed to combine them.
+SELECT pseudo_id
+FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)
+INTERSECT
+SELECT pseudo_id
+FROM cohort_functions.cohort_by_note_text('delier');

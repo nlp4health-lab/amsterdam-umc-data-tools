@@ -19,7 +19,8 @@
 -- primary_only: same as cohort_by_diagnosis_code -- when true,
 --   additionally requires is_chief_problem = 'true'. Normalized to
 --   'true'/'false' for both sources by v_diagnoses_longitudinal itself
---   (070_v_diagnoses_longitudinal.sql).
+--   (070_v_diagnoses_longitudinal.sql) -- see that file's own header
+--   for the full history of why this normalization exists.
 -- date_from/date_to: inclusive bounds on observation_date (a real
 --   `date` column on both source tables, so no time-of-day boundary
 --   issue). Either or both may stay NULL to leave that side unbounded.
@@ -44,3 +45,17 @@ AS $$
       AND (date_to IS NULL OR d.observation_date <= date_to)
 $$;
 
+-- Manual verification (run by hand against the live database -- no
+-- automated test suite in this repo):
+--
+-- 1. Function returns results and matches a direct query:
+--   SELECT count(*) FROM cohort_functions.cohort_by_diagnosis_text('hartfalen', true);
+--   SELECT count(DISTINCT pseudo_id) FROM amc_views.v_diagnoses_longitudinal
+--     WHERE diagnosis_description ILIKE '%hartfalen%' AND is_chief_problem = 'true';
+--   -- both counts must match
+--
+-- 2. Unbounded dates behave as "no filter":
+--   SELECT count(*) FROM cohort_functions.cohort_by_diagnosis_text('hartfalen');
+--   SELECT count(DISTINCT pseudo_id) FROM amc_views.v_diagnoses_longitudinal
+--     WHERE diagnosis_description ILIKE '%hartfalen%';
+--   -- both counts must match

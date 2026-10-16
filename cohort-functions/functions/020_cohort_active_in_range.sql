@@ -53,4 +53,23 @@ AS $$
       AND COALESCE(t.event_end_datetime, t.event_datetime) >= date_from
 $$;
 
-
+-- Manual verification (run by hand against the live database):
+--
+-- 1. A same-day event on date_to is included (the boundary fix):
+--   -- pick a real date with known activity, e.g. today's data pull's
+--   -- most recent loaded date, then:
+--   SELECT count(*) FROM cohort_functions.cohort_active_in_range(
+--     ARRAY['lab'], '2024-01-01', '2024-01-01');
+--   -- compare against:
+--   SELECT count(DISTINCT pseudo_id) FROM amc_views.v_clinical_timeline
+--     WHERE event_domain = 'lab'
+--       AND event_datetime >= '2024-01-01'::timestamptz
+--       AND event_datetime <  '2024-01-02'::timestamptz;
+--   -- both counts must match
+--
+-- 2. An ongoing stay that started before the window still counts:
+--   SELECT pseudo_id, start_datetime, end_datetime FROM amc_views.v_stays
+--     WHERE start_datetime < '2024-01-01' AND end_datetime > '2024-01-31' LIMIT 5;
+--   -- then check each pseudo_id appears in:
+--   SELECT * FROM cohort_functions.cohort_active_in_range(
+--     ARRAY['stay'], '2024-01-01', '2024-01-31');

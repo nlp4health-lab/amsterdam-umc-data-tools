@@ -39,7 +39,7 @@
 -- structured-refresh/06_views/280_v_clinical_timeline.sql (no CASCADE)
 -- would fail with "cannot drop view ... other objects depend on it",
 -- aborting structured-refresh/refresh.sh's 06_views stage partway
--- through and leaving every view
+-- through (it runs under -v ON_ERROR_STOP=1) and leaving every view
 -- numbered after 280 unrebuilt. RETURNS TABLE with an explicit column
 -- list still reads FROM the view (a normal, non-blocking dependency)
 -- but does not share its row type, so no such dependency is created.
@@ -100,3 +100,32 @@ AS $$
       AND (date_from IS NULL OR COALESCE(t.event_end_datetime, t.event_datetime) >= date_from)
 $$;
 
+-- Manual verification (run by hand against the live database -- no
+-- automated test suite in this repo):
+--
+-- 1. Given a known cohort, row count matches a direct query:
+--   SELECT count(*) FROM cohort_functions.timeline_for_cohort(
+--     ARRAY(SELECT pseudo_id FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)),
+--     ARRAY['stay']
+--   );
+--   SELECT count(*) FROM amc_views.v_clinical_timeline
+--     WHERE pseudo_id = ANY(ARRAY(SELECT pseudo_id FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)))
+--       AND event_domain = 'stay';
+--   -- both counts must match
+--
+-- 2. domains left NULL returns every domain for the cohort:
+--   SELECT DISTINCT event_domain FROM cohort_functions.timeline_for_cohort(
+--     ARRAY(SELECT pseudo_id FROM cohort_functions.cohort_by_diagnosis_code('I50%', true) LIMIT 5)
+--   ) ORDER BY 1;
+--   -- expect more than one domain, not just one
+--
+-- 3. Same date-boundary check as cohort_active_in_range -- a same-day
+--    event on date_to is included (swap in a real pseudo_id):
+--   SELECT count(*) FROM cohort_functions.timeline_for_cohort(
+--     ARRAY['<a real pseudo_id>'], ARRAY['lab'], '2024-01-01', '2024-01-01'
+--   );
+--   SELECT count(*) FROM amc_views.v_clinical_timeline
+--     WHERE pseudo_id = '<a real pseudo_id>' AND event_domain = 'lab'
+--       AND event_datetime >= '2024-01-01'::timestamptz
+--       AND event_datetime <  '2024-01-02'::timestamptz;
+--   -- both counts must match
