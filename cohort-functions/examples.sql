@@ -60,3 +60,25 @@ FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)
 INTERSECT
 SELECT pseudo_id
 FROM cohort_functions.cohort_by_note_text('delier');
+
+-- Example 8: export a cohort's pseudo_id list to CSV -- opens directly
+-- in Excel/Sheets. \copy runs client-side (your machine, not the
+-- server), so the file lands wherever you ran psql from.
+\copy (SELECT pseudo_id FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)) TO 'cohort.csv' WITH (FORMAT csv, HEADER true)
+
+-- Example 9: export the same cohort as one JSON array, via a wrapping
+-- json_agg.
+\copy (SELECT json_agg(t) FROM (SELECT pseudo_id FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)) t) TO 'cohort.json'
+
+-- Example 10: export timeline_for_cohort's full detail as JSONL (one
+-- JSON object per line, via row_to_json) -- the more useful shape for
+-- row detail than a single JSON array, e.g. for feeding a downstream
+-- pipeline one event at a time.
+\copy (
+  SELECT row_to_json(t) FROM (
+    SELECT * FROM cohort_functions.timeline_for_cohort(
+      ARRAY(SELECT pseudo_id FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)),
+      ARRAY['stay', 'lab']
+    )
+  ) t
+) TO 'cohort_timeline.jsonl'

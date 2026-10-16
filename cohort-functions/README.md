@@ -151,6 +151,43 @@ necessarily that the stay coincided with the diagnosis.
 See `examples.sql` for more, including a full "lab meeting" style
 query.
 
+## Exporting cohort results
+
+`\copy` runs any `SELECT` to a file, client-side (your machine, not the
+server/cluster) — this works the same whether the result is a bare
+`pseudo_id` list from a selection function or full row detail from
+`timeline_for_cohort`.
+
+CSV (opens directly in Excel/Sheets):
+```sql
+\copy (SELECT pseudo_id FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)) TO 'cohort.csv' WITH (FORMAT csv, HEADER true)
+```
+
+JSON (one array, via a wrapping `json_agg`):
+```sql
+\copy (SELECT json_agg(t) FROM (SELECT pseudo_id FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)) t) TO 'cohort.json'
+```
+
+JSONL (one JSON object per line, via `row_to_json`) — the more useful
+shape for `timeline_for_cohort`'s full row detail, e.g. feeding a
+downstream NLP/analysis pipeline one event/note at a time rather than
+one giant array:
+```sql
+\copy (
+  SELECT row_to_json(t) FROM (
+    SELECT * FROM cohort_functions.timeline_for_cohort(
+      ARRAY(SELECT pseudo_id FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)),
+      ARRAY['stay', 'lab']
+    )
+  ) t
+) TO 'cohort_timeline.jsonl'
+```
+
+This works because `\copy` in default text format writes exactly one
+output line per result row — wrapping that one row in `row_to_json(t)`
+gives valid JSONL for free, no special export mode needed. See
+`examples.sql` for a runnable version of each.
+
 ## Adding a new cohort function
 
 For a new *selection* function (the common case): copy the pattern —
