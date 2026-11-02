@@ -10,7 +10,7 @@ be dropped and rebuilt safely and quickly, not migrated incrementally.
 
 ## First time here?
 
-**[`docs/instructions/`](docs/instructions/)** covers cluster/database
+**[`docs/Instructions/`](docs/Instructions/)** covers cluster/database
 setup: getting access, starting/stopping/connecting to the shared
 Postgres instance, creating a fresh database in Apptainer, and backup
 and restore. Start there before the pipeline steps below.
