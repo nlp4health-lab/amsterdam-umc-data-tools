@@ -12,3 +12,6 @@ Cluster and database setup — not part of the data pipeline itself.
   needed to stand up a new environment from scratch.
 - **[`backup-and-restore.md`](backup-and-restore.md)** — backing up
   `carenlp_db` and restoring it from a dump.
+- **[`troubleshooting.md`](troubleshooting.md)** — what to do for a
+  routine full-dataset refresh, an upstream RDP schema change, or just
+  a question/access request.
