@@ -40,6 +40,24 @@ exists only to get the new CSVs into Postgres as untyped text before
 `02_core_clean` runs, and gets dropped afterward via `./refresh.sh drop-raw`
 (never automatic — run it yourself once you've confirmed core looks right).
 
+The reason `01_raw_load` is dropped at all, rather than just left in
+place for convenience: the cluster's storage allocation is capped at
+1 TB — going over that incurs a cost. Keeping both the raw layer and
+the cleaned `amc_core`/`amc_views` layer around at the same time risks
+pushing past that cap; dropping raw once core is confirmed good is
+what keeps the database within the free allocation.
+
+Note: `drop-raw` drops the whole `amc_raw` schema, not just its tables.
+A single-table `01_raw_load` run (e.g. `./refresh.sh 01_raw_load
+medication_atc`) skips `000_init.sql` (the schema-creation file — it
+has no `@COPY_PARTS` marker, so no table-name argument ever matches
+it), so if you try to reload one table after `drop-raw` without first
+recreating the schemas, it fails with `schema "amc_raw" does not
+exist`. Run `./refresh.sh 01_raw_load init` first (cheap — just
+`CREATE SCHEMA IF NOT EXISTS`, no data loading) — or just run the full
+`./refresh.sh 01_raw_load` with no table argument, which always
+includes `000_init.sql`.
+
 ## Stages
 
 `01_raw_load` → `02_core_clean` → `03_indices_fks` → `04_quality_flags` →

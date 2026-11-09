@@ -14,6 +14,9 @@ be dropped and rebuilt safely and quickly, not migrated incrementally.
 setup: getting access, starting/stopping/connecting to the shared
 Postgres instance, creating a fresh database in Apptainer, and backup
 and restore. Start there before the pipeline steps below.
+**[`troubleshooting.md`](docs/instructions/troubleshooting.md)** —
+what to do for a routine full-dataset refresh, an upstream RDP schema
+change, or just a question/access request.
 
 ## Steps, in order
 
@@ -40,3 +43,4 @@ report on it, and can be run any time afterward:
 - **[`analysis/`](analysis/README.md)** — data-quality assessment,
   exploratory/landscape queries, and ICU cohort methodology. Read-only
   reporting, not part of the automated refresh.
+- **[`cohort-functions/`](cohort-functions/README.md)** — composable SQL functions for building patient cohorts from `amc_views`. Run by hand, not part of the automated refresh.
