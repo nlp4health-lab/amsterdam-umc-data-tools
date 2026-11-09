@@ -11,6 +11,14 @@ ticket with the AmsterdamUMC service desk:
 
 https://amsterdamumc.service-now.com/esc?id=sc_cat_item&sys_id=6edc44311bea4110f2ae6313604bcbc4
 
+## The cluster itself is the problem (not this repo/database)
+
+Hardware, node access, Apptainer/Helios infrastructure issues — as
+opposed to anything about this pipeline or `carenlp_db` itself — go to
+the **Helios Support** Microsoft Teams group:
+
+https://teams.microsoft.com/l/channel/19%3A2rueGnNHXIKjJhFwmxkEWj0fkSiBY89HSUR7_gE39sc1%40thread.tacv2/General?groupId=80058bd6-c5be-4dc3-8fe5-5391a380b7ee&tenantId=68dfab1a-11bb-4cc6-beb5-28d756984fb6
+
 ## A whole new dataset landed (routine data pull, no schema change expected)
 
 Every refresh is a full drop-and-rebuild, not an incremental migration
