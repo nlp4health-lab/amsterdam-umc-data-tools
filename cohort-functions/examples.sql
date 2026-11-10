@@ -50,7 +50,29 @@ FROM cohort_functions.timeline_for_cohort(
     '2023-01-01', '2024-01-01'
 );
 
--- Example 7: structured + unstructured combined -- heart failure
+-- Example 7 (the full "lab meeting" case, start to finish): combine
+-- two selection functions with INTERSECT to build the cohort (same as
+-- Example 3), then feed that cohort straight into timeline_for_cohort
+-- to get full row detail back -- not just who matches, but what
+-- actually happened to them. This is the complete pattern every
+-- selection/detail function here is designed to compose into; Example
+-- 6 above shows the simpler single-function version of the same idea.
+SELECT event_domain, event_datetime, event_label
+FROM cohort_functions.timeline_for_cohort(
+    ARRAY(
+        SELECT pseudo_id
+        FROM cohort_functions.cohort_by_diagnosis_code('I50%', true, '2023-01-01', '2024-01-01')
+        INTERSECT
+        SELECT pseudo_id
+        FROM cohort_functions.cohort_active_in_range(ARRAY['stay'], '2023-01-01', '2024-01-01')
+    ),
+    ARRAY['stay', 'lab'],
+    '2023-01-01', '2024-01-01'
+)
+ORDER BY event_datetime DESC
+LIMIT 30;
+
+-- Example 8: structured + unstructured combined -- heart failure
 -- patients (coded diagnosis) whose notes also mention delirium, a
 -- concept that may never have been formally coded as its own
 -- diagnosis. Neither function alone can answer this; INTERSECT is all
@@ -61,16 +83,16 @@ INTERSECT
 SELECT pseudo_id
 FROM cohort_functions.cohort_by_note_text('delier');
 
--- Example 8: export a cohort's pseudo_id list to CSV -- opens directly
+-- Example 9: export a cohort's pseudo_id list to CSV -- opens directly
 -- in Excel/Sheets. \copy runs client-side (your machine, not the
 -- server), so the file lands wherever you ran psql from.
 \copy (SELECT pseudo_id FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)) TO 'cohort.csv' WITH (FORMAT csv, HEADER true)
 
--- Example 9: export the same cohort as one JSON array, via a wrapping
+-- Example 10: export the same cohort as one JSON array, via a wrapping
 -- json_agg.
 \copy (SELECT json_agg(t) FROM (SELECT pseudo_id FROM cohort_functions.cohort_by_diagnosis_code('I50%', true)) t) TO 'cohort.json'
 
--- Example 10: export timeline_for_cohort's full detail as JSONL (one
+-- Example 11: export timeline_for_cohort's full detail as JSONL (one
 -- JSON object per line, via row_to_json) -- the more useful shape for
 -- row detail than a single JSON array, e.g. for feeding a downstream
 -- pipeline one event at a time.
