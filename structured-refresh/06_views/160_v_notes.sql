@@ -9,8 +9,16 @@ DROP VIEW IF EXISTS amc_views.v_notes CASCADE;
 -- retired definition.
 CREATE VIEW amc_views.v_notes AS
 
+-- pseudo_id: prefers pnpc.pseudo_id (reloaded fresh on every
+-- structured-refresh pull, from the same source as the rest of
+-- amc_core/amc_views) over n.pseudo_id (amc_notes' own copy, frozen
+-- at whenever notes were last extracted via free-text-search --
+-- notes and structured data refresh on independent schedules, so
+-- these can genuinely diverge). Falls back to n.pseudo_id only for a
+-- note with no matching patient_note_patient_contact row, so it still
+-- has *some* identifier rather than NULL.
 SELECT
-    n.pseudo_id,
+    COALESCE(pnpc.pseudo_id, n.pseudo_id) AS pseudo_id,
     n.patient_note_id,
 
     pnpc.patient_contact_id,
