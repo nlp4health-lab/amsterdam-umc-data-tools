@@ -12,6 +12,14 @@ Cluster and database setup — not part of the data pipeline itself.
   needed to stand up a new environment from scratch.
 - **[`backup-and-restore.md`](backup-and-restore.md)** — backing up
   `carenlp_db` and restoring it from a dump.
+- **[`transfer-database-ownership.md`](transfer-database-ownership.md)**
+  — making a *different* person the real owner of the running
+  cluster (so they can `pgstart`/`pgstop` it themselves), not just a
+  sandbox copy on the same server. Needed because the cluster's
+  single-owner permissions can't be worked around any other way on
+  this filesystem — see the doc for what was actually tried and ruled
+  out.
 - **[`troubleshooting.md`](troubleshooting.md)** — what to do for a
-  routine full-dataset refresh, an upstream RDP schema change, or just
-  a question/access request.
+  routine full-dataset refresh, an upstream RDP schema change, a
+  cluster-infrastructure problem, or just a question/access request.
+
