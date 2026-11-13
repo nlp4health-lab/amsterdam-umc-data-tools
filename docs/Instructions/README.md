@@ -6,6 +6,10 @@ Cluster and database setup — not part of the data pipeline itself.
   cluster access, and the day-to-day `pgstart`/`pgstatus`/
   `psqlcarenlp`/`pgstop` workflow for the shared Postgres instance.
   Start here.
+- **[`quick-shortcuts.md`](quick-shortcuts.md)** — common day-to-day
+  commands: listing/describing tables, views, and functions, and
+  using `tmux` to keep a long-running command alive after you
+  disconnect.
 - **[`create-database-in-apptainer.md`](create-database-in-apptainer.md)**
   — one-time setup: building the Postgres container, initializing a
   fresh data directory, and migrating a database in from MyDRE. Only
