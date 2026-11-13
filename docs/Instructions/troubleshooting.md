@@ -30,6 +30,13 @@ way turns out to be an actual schema change, not just new rows.
    per its own `README.md`, producing a fresh set of translated CSVs.
 2. Copy the translated output to `$CSV_HOST` on the cluster (mounted
    read-only at `/csv` inside the Apptainer container).
+   If you copied the repo itself fresh too (not just the CSVs), the
+   executable bit on the shell scripts often doesn't survive a copy —
+   if `./refresh.sh` fails with "Permission denied" rather than an
+   actual error from inside it, this is why:
+   ```bash
+   chmod +x structured-refresh/refresh.sh structured-refresh/tools/*.sh
+   ```
 3. **Run the full refresh**: `./refresh.sh` (all 7 stages, in order) —
    see `structured-refresh/README.md`'s "Running a refresh" for the
    single-stage/single-table/dry-run variants if you want to go
@@ -113,11 +120,14 @@ before `02_core_clean` just means re-doing the same fix twice.
    `v_clinical_timeline` dependency chain for the pattern).
 8. **Re-run `structured-refresh/refresh.sh`** (or just the affected
    stages) end to end and confirm it completes cleanly.
-9. **`07_metadata/`** — once the refresh succeeds, run
+9. 9. **`07_metadata/`** — once the refresh succeeds, run
    `structured-refresh/tools/check_metadata_drift.sql` to see which
-   real columns are now undocumented in `meta.catalog`/
-   `meta.data_dictionary`, and update the curated entries in
-   `07_metadata/020_populate_catalog_curated.sql` accordingly.
+   real `amc_core` columns are now undocumented in
+   `meta.data_dictionary`, and update `data_dictionary.csv`
+   accordingly. If the change was to a *view* column instead, there's
+   no automated check for that — consider by hand whether
+   `meta.catalog`'s curated entries in
+   `07_metadata/020_populate_catalog_curated.sql` need updating too.
 10. **Downstream consumers** — `cohort-functions/` and `analysis/`
     query `amc_views`/`amc_core` directly and won't error until
     actually *called*, not at refresh time. Grep both folders for the
